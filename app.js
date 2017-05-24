@@ -5,6 +5,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var expressValidator = require('express-validator');
+var expressSession = require('express-session');
 
 var mongoose = require('mongoose');
 
@@ -16,8 +18,6 @@ var app = express();
 //database
 mongoose.connect('mongodb://localhost/microfb');
 
-
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -27,8 +27,12 @@ app.set('view engine', 'hbs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+//start to use express validator
+app.use(expressValidator());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+//added session, saveUninitialized jest defaultowo false, resave jesli true to zapisajuje po każdym requescie, false tylko jeśli coś zmienimy
+app.use(expressSession({secret: 'max', saveUninitialized: false, resave: false}));
 
 app.use('/', index);
 app.use('/users', users);
