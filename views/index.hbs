@@ -1,16 +1,12 @@
-{{# if success}}
-    <h1> Succesfull validation. U can log in now!</h1>
-{{else}}
-  {{# if errors}}
-    <ul>
-      {{# each errors}}
-        <li>{{this.msg}}</li>
-      {{/each}}
-    </ul>
-  {{/if}}
+{{# if errors}}
+  {{# each errors}}
+    <div class="alert alert-danger">{{msg}}</div>
+  {{/each}}
 {{/if}}
+
+
 <div class="registerForm">
-  <form class="form-style" action="/register" method="post">
+  <form class="form-style" action="/users/register" method="post">
     <label for="firstName">
       <span>Enter Your Name</span><input type="text" name="firstName" required="true" />
     </label>
@@ -24,6 +20,6 @@
       <span>Enter Your Password</span><input type="password" name="password" required="true" />
     </label>
     <input type="submit" value="Register" />
-    <a href="authentication">Login</a>
+    <a href="/users/login">Login</a>
   </form>
 </div>
