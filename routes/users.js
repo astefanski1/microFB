@@ -10,11 +10,11 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-router.get('/login', function(req, res, next) {
-  res.render('login', { });
+router.get('/login', ensureIsLogged, function(req, res, next) {
+  res.render('login', { user: req.user , message: req.flash('signupMessage') });
 });
 
-router.post('/register', function(req, res, next) {
+router.post('/register', ensureIsLogged,function(req, res, next) {
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
   var email = req.body.email;
@@ -29,23 +29,32 @@ router.post('/register', function(req, res, next) {
 
   var errors = req.validationErrors();
 
+
+
   if(errors){
-    res.render('index', {errors: errors});
-  } else {
-    var newUser = new User({
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: password
-    });
+    res.render('index', {errors: errors, user: req.user});
+  }
+  else {
+    User.findOne({email: email}, function(err,user){
+      if(err) {throw err;}
+      if(user){
+        res.render('index', {singUpError: "That email already exists!", user: req.user});
+      }
+      else{
+        var newUser = new User({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password
+        });
 
-    User.createUser(newUser, function(err, user){
-      if(err){throw err; }
-      console.log(user);
+        User.createUser(newUser, function(err, user){
+          if(err){throw err; }
+          console.log(user);
+        });
+        res.render('login', { user: req.user, message: "Registration complete! U can now login! ;)"});
+      }
     });
-
-    req.flash('success_msg', 'You are registered and can now log in');
-    res.redirect('/users/login');
   }
 
   console.log(firstName + " " + lastName + " " + email + " " + password);
@@ -57,7 +66,7 @@ passport.use(new LocalStrategy(
       User.getUserByEmail(username, function(err, user){
         if (err) { throw err;}
         if (!user){
-          return done(null, false, {message: 'Unkown user'});
+          return done(null, false, { message: 'Unkown user!'});
         }
         User.comparePassword(password, user.password, function(err, isMatch) {
           if (err) {throw err;}
@@ -65,7 +74,7 @@ passport.use(new LocalStrategy(
             return done(null, user);
           }
           else {
-            return done(null, false, { message: 'Invalid password'});
+            return done(null, false, { message: 'Password is not valid!'} );
           }
         });
       });
@@ -86,14 +95,22 @@ passport.deserializeUser(function(id, done) {
 router.post('/login',
   passport.authenticate('local', {successRedirect: '/wall', failureRedirect: '/users/login', failureFlash: true}),
   function(req, res) {
-    res.redirect('/wall');
+    res.render('/wall', {user: req.user, message: req.flash('message')});
 });
 
-router.get('logout', function(req, res){
+router.get('/logout', function(req, res){
   req.logout();
-  req.flash('success_msg', 'You are logged out');
-  res.redirect('/users/login');
+  res.render('login', { user: req.user, message: 'U succesfully logged out!' });
 });
+
+function ensureIsLogged(req, res, next){
+  if(req.isAuthenticated()){
+    res.redirect('/wall');
+  }
+  else{
+    return next();
+  }
+}
 
 
 module.exports = router;

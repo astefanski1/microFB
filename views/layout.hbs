@@ -12,6 +12,13 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/profile.css' />
+    <link rel='stylesheet' href='/stylesheets/search.css' />
+    <script src="/javascripts/wall.js"></script>
+    <script src="/javascripts/friends.js"></script>
+    <!-- socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+
   </head>
   <body>
     <!-- NAVBAR -->
@@ -23,7 +30,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">MicroFb</a>
+          {{# if user }}
+            <a class="navbar-brand" href="/wall">MicroFb</a>
+          {{else}}
+            <a class="navbar-brand" href="/">MicroFb</a>
+          {{/ if}}
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <!-- <ul class="nav navbar-nav">
@@ -34,14 +45,26 @@
               <input type="text" class="form-control" placeholder="Search" id="searchBox">
             </div>
             <button type="submit" class="btn btn-default">Search</button>
+            <ul class="searchResults" id="searchResults" hidden>
+
+            </ul>
           </form>
           <ul class="nav navbar-nav navbar-right">
             {{# if user }}
-              <li><a href="/"><span class="glyphicon glyphicon-user"></span>Logout</a></li>
-              <li><a href="/wall"><span class="glyphicon glyphicon-user"></span>{{user.FirstName}} Wall</a></li>
+              <li class="dropdown">
+                <a class="fa fa-globe" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Action</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#">Separated link</a></li>
+                </ul>
+              </li>
+              <li><a href="/wall"><span class="glyphicon glyphicon-user"></span> {{user.firstName}} Wall</a></li>
+              <li><a href="/users/logout"><i class="fa fa-power-off" aria-hidden="true"></i> Logout</a></li>
+
             {{else}}
-              <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-              <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+              <li><a href="/"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+              <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
             {{/ if}}
           </ul>
         </div>

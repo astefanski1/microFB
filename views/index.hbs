@@ -4,6 +4,10 @@
   {{/each}}
 {{/if}}
 
+{{# if singUpError }}
+  <div class="alert alert-danger">{{singUpError}}</div>
+{{/if}}
+
 
 <div class="registerForm">
   <form class="form-style" action="/users/register" method="post">

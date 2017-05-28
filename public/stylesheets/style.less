@@ -6,13 +6,62 @@ body {
   background-color:	#596f87;
 }
 
+//New post
+.new-post-container {
+  width: 80%;
+  margin: 2%;
+  top: 10%;
+  float: left;
+}
+
+.postBtn {
+  border: 0px solid;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  text-decoration: none;
+  color: #fff;
+  position: relative;
+  background-color: #55acee;
+}
+
+.postBtn:active {
+  transform: translate(0px, 5px);
+  -webkit-transform: translate(0px, 5px);
+}
+
+textarea {
+  width: 100%;
+  height: 50px;
+  background: #acc6e2;
+  border-image: none;
+  border-radius: 6px;
+  border-style: none solid solid none;
+  border-width: medium 1px 1px medium;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12) inset;
+  color: #555555;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 1em;
+  line-height: 1.4em;
+  padding: 5px 8px;
+  transition-duration: 1s;
+  -webkit-transition-duration: 1s;
+  resize: none;
+}
+
+textarea:focus {
+    background: none repeat scroll 0 0 #FFFFFF;
+    outline-width: 0;
+    height: 200px;
+}
+
 //Friends List style
 
 .friends-box {
   position: fixed;
   right: 0;
   float: right;
-  width: 70px;
+  width: 85px;
   transition-duration: 1s;
   -webkit-transition-duration:1s;
   white-space: nowrap;
@@ -35,65 +84,11 @@ body {
 }
 
 .friends-box:hover{
-  width: 200px;
+  width: 350px;
   li:hover {
     background: #394D61;
     color: white;
   }
-}
-
-
-//Wall style
-.wall-container {
-  width: 80%;
-  font-size: 1.1em;
-  background: #acc6e2;
-  padding: 30px 30px 15px 30px;
-  border: 5px solid #53687E;
-  margin: 2%;
-  top: 10%;
-  float: left;
-}
-
-.wall-posts {
-  color: white;
-  top: 10%;
-  text-align: justify;
-  display: inline-grid;
-}
-
-.post {
-  background: #596f87;
-  border-radius: 20px;
-  padding: 30px 30px 15px 30px;
-  border: 2px solid #53687E;
-  margin: 1%;
-  position: relative;
-}
-
-.photo {
-  float: left;
-  position: relative;
-  width: 10%;
-  p {
-    padding: 5px;
-    text-align: center;
-  }
-}
-
-.post-text {
-  float: right;
-  margin-right: 1%;
-  margin-left: 1%;
-  width: 85%;
-}
-
-.post-options {
-  width: 100%;
-  float: left;
-  text-align: left;
-  bottom: 0;
-  padding-top: 20px;
 }
 
 //Login and register forms styles

@@ -15,11 +15,22 @@ var http = require('http');
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+
 /**
  * Create HTTP server.
  */
 
 var server = http.createServer(app);
+var io = require('socket.io')(server);
+var passportSocketIo = require("passport.socketio");
+
+io.use(passportSocketIo.authorize({
+  secret: 'secret',   // the session_secret to parse the cookie
+  store:        app.get('sessionStore')        // we NEED to use a sessionstore. no memorystore please
+}));
+
+
+require('../sockets/app.js')(io);
 
 /**
  * Listen on provided port, on all network interfaces.
