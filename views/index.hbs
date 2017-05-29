@@ -11,11 +11,14 @@
 
 <div class="registerForm">
   <form class="form-style" action="/users/register" method="post">
+    <label for="username">
+      <span>Username</span><input type="text" name="username" required="true" />
+    </label>
     <label for="firstName">
-      <span>Enter Your Name</span><input type="text" name="firstName" required="true" />
+      <span>Name</span><input type="text" name="firstName" required="true" />
     </label>
     <label for="lastName">
-      <span>Enter Your Last Name</span><input type="text" name="lastName" required="true" />
+      <span>Last Name</span><input type="text" name="lastName" required="true" />
     </label>
     <label for="email">
       <span>Email Address</span><input type="email" name="email" required="true" />

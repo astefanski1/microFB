@@ -12,7 +12,6 @@
       <div class="profilePosts">
         {{# if posts}}
         {{# each posts }}
-
           <div class="profilePost">
             <div class="postAuthor">
               <img src="https://cdn0.iconfinder.com/data/icons/iconshock_guys/512/andrew.png" >
@@ -41,10 +40,8 @@
 
 <div class="friends-box">
   <ul>
-    <li><img src="/images/bullet_green.png" width="20">  Aleks Stefanski</li>
-    <li><img src="/images/bullet_red.png" width="20">  Aleks Stefanski</li>
-    <li><img src="/images/bullet_green.png" width="20">  Aleks Stefanski</li>
-    <li><img src="/images/bullet_red.png" width="20">  Alekscsazcasfasfasfasfasfassfsaf Stefanski</li>
-    <li><img src="/images/bullet_green.png" width="20">  Aleks Stefanski</li>
+    {{# each friends}}
+      <li><img src="/images/bullet_green.png" width="20"> {{firstName}} {{lastName}}</li>
+    {{/each}}
   </ul>
 </div>

@@ -1,0 +1,70 @@
+<div class="profile">
+    <div class="photo">
+      <img src="https://cdn0.iconfinder.com/data/icons/iconshock_guys/512/andrew.png" >
+      <p>{{profileUser.firstName}} {{profileUser.lastName}}</p>
+      <div><i id="username">{{profileUser.username}}</i></div>
+      <i>Friends: 10</i>
+      <div class="isFriendDiv">
+        {{# if inviteSended}}
+          <i><button class="isFriend" id="inviteSended" disabled>Invite sended</button></i>
+        {{else}}
+          {{# if isFriend}}
+            <i><buttonclass="isFriend" id="removeFriend">Remove friend</button></i>
+          {{else}}
+            <i><button class="isFriend" id="addFriend">Add friend</button></i>
+          {{/if}}
+        {{/if}}
+      </div>
+
+
+    </div>
+    <div class="profile-wall">
+      {{# if isFriend}}
+      <div class="addProfilePost">
+        <textarea id="postTextArea" name="postTextArea" placeholder="Opublikuj coś ..."></textarea>
+        <button id="addPost" type="submit" class="postBtn blue" name="add-post">Add post</button>
+      </div>
+      {{/if}}
+      <div class="profilePosts">
+        {{# if isFriend}}
+          {{# if posts}}
+          {{# each posts }}
+
+            <div class="profilePost">
+              <div class="postAuthor">
+                <img src="https://cdn0.iconfinder.com/data/icons/iconshock_guys/512/andrew.png" >
+                <p>{{author.firstName}} {{author.lastName}}</p>
+              </div>
+              <div class="profilePostText">
+                {{ text }}
+              </div>
+              <div class="profilePostOptions">
+                <i class="fa fa-heart" aria-hidden="true"> Like</i> |
+                <i class="fa fa-share" aria-hidden="true"> Share it</i>
+                <i class="profilePostTime"> {{formatDate time }} </i>
+              </div>
+            </div>
+
+          {{/each}}
+          {{else}}
+            <div class="profilePost" id="profilePost">
+              <h1> No posts yet! Add some or add friends to see posts! ;)</h1>
+            </div>
+          {{/if}}
+          {{else}}
+          <div class="profilePost" id="profilePost">
+            <h2><center> To see posts {{profileUser.firstName}} {{profileUser.lastName}} add him to friends! </center></h2>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+</div>
+
+
+<div class="friends-box">
+  <ul>
+    {{# each friends}}
+      <li><img src="/images/bullet_green.png" width="20"> {{firstName}} {{lastName}}</li>
+    {{/each}}
+  </ul>
+</div>

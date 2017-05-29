@@ -26,5 +26,8 @@
     "passport.socketio": "^3.7.0",
     "serve-favicon": "~2.4.2",
     "socket.io": "^2.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }

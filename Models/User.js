@@ -4,10 +4,14 @@ var bcrypt = require('bcryptjs');
 var Schema = mongoose.Schema;
 
 var User = new Schema({
+  username: { type: String, required: true, unique: true },
   firstName: String,
   lastName: String,
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
+  friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  friendsInvites: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  notifications: [{ type: Schema.Types.ObjectId, ref: 'Notification' }]
 });
 
 var User = module.exports = mongoose.model('User', User);

@@ -2,6 +2,7 @@
 var express = require('express');
 var User = require('../Models/User');
 var Post = require('../Models/Post');
+var Notification = require('../Models/Notification');
 var router = express.Router();
 /* GET home page. */
 router.get('/', ensureIsLogged, function(req, res, next) {
@@ -40,11 +41,24 @@ function ensureAuthenticated(req, res, next){
 }
 
 router.get('/wall', ensureAuthenticated, function(req, res, next) {
-  Post.find({author: req.user.id}).sort({time: 'desc'}).populate('author').exec(function(err, posts){
-    if (err) {throw err;}
-
-    res.render('wall', { title: 'wall', user: req.user, posts: posts });
-    console.log(posts);
+  User.findOne({_id: req.user.id}).populate('notifications').populate('friends').exec(function(err, user){
+      //console.log(user.friends);
+      var postsToSend = [];
+      Post.find({}).sort({time: 'desc'}).populate('author').exec(function(err, posts){
+        if (err) {throw err;}
+        for (var post of posts) {
+          for (var friend of user.friends) {
+            if(friend.id == post.author.id){
+              postsToSend.push(post);
+              console.log("Jestem");
+            }
+          }
+          if(user.id == post.author.id){
+            postsToSend.push(post);
+          }
+        }
+        res.render('wall', { title: 'wall', user: req.user, posts: postsToSend, notifications: user.notifications, friends: user.friends });
+      });
   });
 });
 

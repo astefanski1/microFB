@@ -53,13 +53,29 @@
             {{# if user }}
               <li class="dropdown">
                 <a class="fa fa-globe" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"></a>
-                <ul class="dropdown-menu">
-                  <li><a href="#">Action</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="#">Separated link</a></li>
+                <ul class="dropdown-menu" id="notifications">
+                  {{# if notifications}}
+                    {{# each notifications}}
+                      {{# if toFriends}}
+                        <li>
+                          <p>{{fromUserFullname}}</p> {{text}}
+                          <button id="acceptInvite" value="{{fromUser}}"><i class="fa fa-check" aria-hidden="true"></i></button>
+                          <button id="declineInvite" value="{{fromUser}}"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                      {{else}}
+                        <li><p>{{fromUserFullname}}</p> {{text}} </li>
+                        <li role="separator" class="divider"></li>
+                      {{/if}}
+                    {{/each}}
+                  {{else}}
+                    <li id="noNotificationsLi"><p>No notifications to show</p></li>
+                  {{/if}}
+
+
                 </ul>
               </li>
-              <li><a href="/wall"><span class="glyphicon glyphicon-user"></span> {{user.firstName}} Wall</a></li>
+              <li><a href="/wall"><i class="fa fa-address-card-o" aria-hidden="true"></i> {{user.firstName}} Wall</a></li>
               <li><a href="/users/logout"><i class="fa fa-power-off" aria-hidden="true"></i> Logout</a></li>
 
             {{else}}
