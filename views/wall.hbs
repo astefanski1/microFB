@@ -2,7 +2,11 @@
     <div class="photo">
       <img src="https://cdn0.iconfinder.com/data/icons/iconshock_guys/512/andrew.png" >
       <p>{{user.firstName}} {{user.lastName}}</p>
-      <i>Friends: 10</i>
+      {{# if countFriends}}
+        <i>Friends: {{countFriends}}</i>
+      {{else}}
+        <i>Friends: Hidded</i>
+      {{/if}}
     </div>
     <div class="profile-wall">
       <div class="addProfilePost">
@@ -20,8 +24,8 @@
             <div class="profilePostText">
               {{ text }}
             </div>
-            <div class="profilePostOptions">
-              <i class="fa fa-heart" aria-hidden="true"> Like</i> |
+            <div class="profilePostOptions" id="profilePostOptions">
+              <button class="fa fa-heart" aria-hidden="true" id="likePost" value="{{id}}"> Like</button> |
               <i class="fa fa-share" aria-hidden="true"> Share it</i>
               <i class="profilePostTime"> {{formatDate time }} </i>
             </div>
@@ -38,10 +42,17 @@
 </div>
 
 
-<div class="friends-box">
-  <ul>
+<div class="friendsBox">
+  <ul id="friendsList">
+    <li id="allFriends"> All friends <i>{{countFriends}}</i></li>
     {{# each friends}}
-      <li><img src="/images/bullet_green.png" width="20"> {{firstName}} {{lastName}}</li>
+      <li class="friendUsername" data-user="{{username}}">{{firstName}} {{lastName}}</li>
     {{/each}}
   </ul>
+</div>
+
+
+
+<div class="chatBoxes" id="chatBoxes">
+
 </div>

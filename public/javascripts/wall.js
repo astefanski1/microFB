@@ -36,5 +36,10 @@ $(document).ready(function(){
     });
   });
 
+  $(".profilePosts").on('click','.fa-heart', function(){
+    console.log($(this).val());
+  });
+
+
 
 });

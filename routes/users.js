@@ -25,13 +25,14 @@ router.get('/profile/:username', function(req, res, next){
     var friendsInvites = profileUser.friendsInvites;
     var inviteSended = false;
     var isMyFriend = false;
+    var countFriends = 0;
     console.log("Notyfikacja: " + notifications);
     //jeśli wszedłeś na siebie renderuje twojego walla
     if(userReq.id === profileUser.id){
       Post.find({author: userReq.id}).sort({time: 'desc'}).populate('author').exec(function(err, posts){
         if (err) {throw err;}
         console.log("renderuje to");
-        res.render('wall', { title: 'wall', user: req.user, posts: posts, notifications: notifications});
+        res.render('wall', { title: 'wall', user: req.user, posts: posts, notifications: notifications, countFriends: userReq.friends.length });
       });
     } else{
       //Jeśli nie weszliśmy na siebie to
@@ -45,12 +46,13 @@ router.get('/profile/:username', function(req, res, next){
             //jeśli nie to Sprawdzamy czy jestesmy znajomymi
             for (var friend of friends) {
               //jeśli jesteś jego znajomym
+              countFriends += 1;
               if(friend == userReq.id){
                 isMyFriend = true;
               }
             }
             if(isMyFriend === true){
-              res.render('profile', {user: userReq, profileUser: profileUser, isFriend: true, notifications: user.notifications, posts: posts, friends: user.friends });
+              res.render('profile', {user: userReq, profileUser: profileUser, isFriend: true, notifications: user.notifications, posts: posts, friends: user.friends, countFriends: countFriends });
             }
             //jeśli jeszcze nie jesteś jego znajomym
             else {

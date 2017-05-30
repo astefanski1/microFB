@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 var Post = new Schema({
   text: String,
   author: { type: Schema.Types.ObjectId, ref: 'User' },
-  likes: [{type: Number, ref: 'User', default: 0}],
+  likes: [{type: Schema.Types.ObjectId, ref: 'User'}],
   time : { type : Date, default: Date.now() }
 });
 

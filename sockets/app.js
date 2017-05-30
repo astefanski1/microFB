@@ -176,6 +176,32 @@ module.exports = function(io) {
             notification.remove();
           });
         });
+
+        //open allFriends chat
+        socket.on('allFriendsChatOpen', function(){
+          var userReq = socket.request.user;
+          console.log('User: '+ userReq.firstName + ' otworzył czat z allFriends');
+        });
+        //allFriendsChat message sended
+        socket.on('allFriendsChatMessageSended', function(text){
+          var userReq = socket.request.user;
+          var message = text;
+
+          for (var friendID of userReq.friends) {
+            io.sockets.in(friendID).emit('allFriendsChatMessageSended', { message: message, whoSended: userReq.firstName });
+          }
+        });
+
+        //privateChat message sended
+        socket.on('privateChatMessageSended', function(text, privateChatWith){
+          var userReq = socket.request.user;
+          var message = text;
+
+          User.findOne({username: privateChatWith}, function(err, privateChatUser){
+            io.sockets.in(privateChatUser.id).emit('privateChatMessageSended', { message: message, whoSendedFirstName: userReq.firstName, whoSendedUsername: userReq.username });
+          });
+        });
+
     //End connection
     });
 };

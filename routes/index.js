@@ -44,6 +44,7 @@ router.get('/wall', ensureAuthenticated, function(req, res, next) {
   User.findOne({_id: req.user.id}).populate('notifications').populate('friends').exec(function(err, user){
       //console.log(user.friends);
       var postsToSend = [];
+      var countFriends = 0;
       Post.find({}).sort({time: 'desc'}).populate('author').exec(function(err, posts){
         if (err) {throw err;}
         for (var post of posts) {
@@ -57,7 +58,8 @@ router.get('/wall', ensureAuthenticated, function(req, res, next) {
             postsToSend.push(post);
           }
         }
-        res.render('wall', { title: 'wall', user: req.user, posts: postsToSend, notifications: user.notifications, friends: user.friends });
+        countFriends = user.friends.length;
+        res.render('wall', { title: 'wall', user: req.user, posts: postsToSend, notifications: user.notifications, friends: user.friends, countFriends: countFriends });
       });
   });
 });

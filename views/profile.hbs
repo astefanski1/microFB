@@ -3,7 +3,11 @@
       <img src="https://cdn0.iconfinder.com/data/icons/iconshock_guys/512/andrew.png" >
       <p>{{profileUser.firstName}} {{profileUser.lastName}}</p>
       <div><i id="username">{{profileUser.username}}</i></div>
-      <i>Friends: 10</i>
+      {{# if countFriends}}
+        <i>Friends: {{countFriends}}</i>
+      {{else}}
+        <i>Friends: Hidded</i>
+      {{/if}}
       <div class="isFriendDiv">
         {{# if inviteSended}}
           <i><button class="isFriend" id="inviteSended" disabled>Invite sended</button></i>
