@@ -125,7 +125,9 @@ $(document).ready(function(){
       var text = $(`#${whichInput}`).val();
       $(`#messages${privateChatWith}`).append(`<li><b>You:</b> ${text}</li>`);
       chatTable[0].scrollTop = chatTable[0].scrollHeight;
-      socket.emit('privateChatMessageSended', text, privateChatWith);
+      if(privateChatWith !== undefined){
+          socket.emit('privateChatMessageSended', text, privateChatWith);
+      }
       $(`#${whichInput}`).val('');
     }
   });

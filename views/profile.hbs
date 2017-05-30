@@ -13,7 +13,7 @@
           <i><button class="isFriend" id="inviteSended" disabled>Invite sended</button></i>
         {{else}}
           {{# if isFriend}}
-            <i><buttonclass="isFriend" id="removeFriend">Remove friend</button></i>
+            <!-- <i><buttonclass="isFriend" id="removeFriend">Remove friend</button></i>-->
           {{else}}
             <i><button class="isFriend" id="addFriend">Add friend</button></i>
           {{/if}}
@@ -43,7 +43,11 @@
                 {{ text }}
               </div>
               <div class="profilePostOptions">
-                <i class="fa fa-heart" aria-hidden="true"> Like</i> |
+                {{# if isLiked}}
+                  <i><button class="fa fa-heart liked" aria-hidden="true" id="likePost" value="{{id}}"> Like</button></i> |
+                {{else}}
+                  <i><button class="fa fa-heart" aria-hidden="true" id="likePost" value="{{id}}"> Like</button></i> |
+                {{/if}}
                 <i class="fa fa-share" aria-hidden="true"> Share it</i>
                 <i class="profilePostTime"> {{formatDate time }} </i>
               </div>
@@ -65,10 +69,18 @@
 </div>
 
 
-<div class="friends-box">
-  <ul>
-    {{# each friends}}
-      <li><img src="/images/bullet_green.png" width="20"> {{firstName}} {{lastName}}</li>
-    {{/each}}
+<div class="friendsBox">
+  <ul id="friendsList">
+    {{# if countFriends}}
+      <li id="allFriends"> All friends <i>{{countFriends}}</i></li>
+      {{# each friends}}
+        <li class="friendUsername" data-user="{{username}}">{{firstName}} {{lastName}}</li>
+      {{/each}}
+    {{/if}}
   </ul>
+</div>
+
+
+<div class="chatBoxes" id="chatBoxes">
+
 </div>

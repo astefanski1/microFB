@@ -13,10 +13,12 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/profile/:username', function(req, res, next){
-
   var username = req.params.username;
-  console.log(username);
   User.findOne({username: username }).populate('notifications').exec(function(err, profileUser){
+    console.log(profileUser);
+    if(profileUser === null){
+      return res.redirect('/wall');
+    }
     console.log("Profile page: " + profileUser.firstName + " " + profileUser.lastName);
     console.log("Searching friend: " + req.user.id);
     var friends = profileUser.friends;
@@ -51,13 +53,58 @@ router.get('/profile/:username', function(req, res, next){
                 isMyFriend = true;
               }
             }
+            var isLiked = false;
             if(isMyFriend === true){
-              res.render('profile', {user: userReq, profileUser: profileUser, isFriend: true, notifications: user.notifications, posts: posts, friends: user.friends, countFriends: countFriends });
+              for (var post of posts) {
+                isLiked = false;
+                if(post.likes.length === 0){
+                  post.isLiked = false;
+                }
+                else {
+                  for (var like of post.likes) {
+                    if(like == userReq.id){
+                      isLiked = true;
+                    }
+                  }
+                  if(isLiked === true){
+                    post.isLiked = true;
+                  }else {
+                    post.isLiked = false;
+                  }
+                  post.save();
+                }
+              }
+              res.render('profile', {user: userReq,
+                                     profileUser: profileUser,
+                                     isFriend: true,
+                                     notifications: user.notifications,
+                                     posts: posts,
+                                     friends: user.friends,
+                                     countFriends: countFriends });
             }
             //jeśli jeszcze nie jesteś jego znajomym
             else {
               console.log("Nie jest moim znajomym");
-              res.render('profile', {user: user, profileUser: profileUser, isFriend: false, notifications: user.notifications, friends: user.friends});
+              for (var inviteCheck of friendsInvites) {
+                if(inviteCheck == userReq.id){
+                  inviteSended = true;
+                }
+              }
+              if(inviteSended === true){
+                res.render('profile', {user: user,
+                                       profileUser: profileUser,
+                                       isFriend: false,
+                                       notifications: user.notifications,
+                                       friends: user.friends,
+                                       inviteSended: true});
+              }else {
+                res.render('profile', {user: user,
+                                       profileUser: profileUser,
+                                       isFriend: false, notifications:
+                                       user.notifications,
+                                       friends: user.friends});
+              }
+
             }
           }else{
             //Jeśli lista jest pusta
@@ -69,10 +116,19 @@ router.get('/profile/:username', function(req, res, next){
             }
             //Jeśli tak
             if(inviteSended === true){
-                res.render('profile', { title: 'wall', user: req.user, posts: posts, notifications: user.notifications, inviteSended: true, friends: user.friends});
+                res.render('profile', { title: 'wall',
+                                       user: req.user,
+                                       posts: posts,
+                                       notifications: user.notifications,
+                                       inviteSended: true,
+                                       friends: user.friends});
             } else{
               //Jeśli nie
-              res.render('profile', {user: user, profileUser: profileUser, isFriend: false, notifications: user.notifications, friends: user.friends});
+              res.render('profile', {user: user,
+                                     profileUser: profileUser,
+                                     isFriend: false,
+                                     notifications: user.notifications,
+                                     friends: user.friends});
             }
           }
         });

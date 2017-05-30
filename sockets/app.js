@@ -11,18 +11,25 @@ module.exports = function(io) {
 
         //adding post
         socket.on('addPost', function(text){
+          var user = socket.request.user;
           var newPost = new Post({
             text: text,
-            author: socket.request.user.id
+            author: socket.request.user.id,
+            numberOfLikes: 0
           });
 
           newPost.save(function(err){
             if(err){throw err;}
             console.log('Succesfully added post! Text: ' + text +  "by user: " + socket.request.user.id + "username: " + socket.request.user.firstName);
+            Post.findOne({text: text, author: user}, function(err, post){
+              if(err){ throw err;}
+              console.log(post);
+              socket.emit('addPost', {text: text, user: user, time: 'Just now', postID: post._id} );
+            });
           });
 
-          var user = socket.request.user;
-          socket.emit('addPost', {text: text, user: user, time: 'Just now'} );
+
+
         });
 
         //adding friend
@@ -200,6 +207,77 @@ module.exports = function(io) {
           User.findOne({username: privateChatWith}, function(err, privateChatUser){
             io.sockets.in(privateChatUser.id).emit('privateChatMessageSended', { message: message, whoSendedFirstName: userReq.firstName, whoSendedUsername: userReq.username });
           });
+        });
+
+        //like post
+
+        socket.on('postLike', function(postID){
+          var userReq = socket.request.user;
+          var numberOfLikes = 0;
+          Post.findOne({_id: postID}).exec(function(err, post){
+            if(post.likes === undefined ){
+              console.log("Nie ma lajków!");
+              console.log(post.likes);
+              Post.findOneAndUpdate(
+                {_id: postID},
+                {$push: {likes: userReq.id}},
+                {safe: true, upsert: true},
+                function(err, model) {
+                    if(err){ throw err; }
+                    console.log("Like dodany do posta " + postID + " przez: " + userReq.firstName);
+                    numberOfLikes +=1;
+                    socket.emit('postLikeAdded', {numberOfLikes: numberOfLikes, postID: postID});
+                }
+              );
+            } else {
+              var isLiked = false;
+              console.log(post.likes);
+              for (var user of post.likes) {
+                console.log("Sprawdzam czy dał już like");
+                if(user == userReq.id){
+                  console.log("Dał już like");
+                  isLiked = true;
+                  numberOfLikes +=1;
+                }
+              }
+
+              //Jeśli dał już like
+              if(isLiked === true){
+                //To usuwamy like
+                var element;
+                post.likes.forEach((like, index) => {
+                  console.log(like);
+                  if(like == userReq.id){
+                    element = index;
+                    console.log("TU "+element);
+                  }
+                });
+
+                post.likes.splice(element,1);
+                post.save();
+                numberOfLikes -=1;
+                socket.emit('postLikeAdded',{numberOfLikes: numberOfLikes, postId: postID});
+
+              }else {
+                //Jeśli nie to dodajemy like
+                Post.findOneAndUpdate(
+                  {_id: postID},
+                  {$push: {likes: userReq.id}},
+                  {safe: true, upsert: true},
+                  function(err, model) {
+                      if(err){ throw err; }
+                      console.log("Like dodany do posta " + postID + " przez: " + userReq.firstName);
+                      numberOfLikes +=1;
+                      socket.emit('postLikeAdded',{numberOfLikes: numberOfLikes, postID: postID});
+                  }
+                );
+                //ELSE END
+              }
+              //ELSE END
+            }
+            //Post.find END
+          });
+          //Socket END
         });
 
     //End connection

@@ -14,6 +14,7 @@ $(document).ready(function(){
       var user = data.user;
       var text = data.text;
       var time = data.time;
+      var postID = data.postID;
 
       $('#profilePost').hide();
 
@@ -26,8 +27,8 @@ $(document).ready(function(){
           <div class="profilePostText">
             ${text}
           </div>
-          <div class="profilePostOptions">
-            <i class="fa fa-heart" aria-hidden="true"> Like</i> |
+          <div class="profilePostOptions" id="profilePostOptions">
+            <i><button class="fa fa-heart" aria-hidden="true" id="likePost" value="${postID}"> Like</button></i> |
             <i class="fa fa-share" aria-hidden="true"> Share it</i>
             <i class="profilePostTime"> ${time} </i>
           </div>
@@ -37,9 +38,13 @@ $(document).ready(function(){
   });
 
   $(".profilePosts").on('click','.fa-heart', function(){
-    console.log($(this).val());
+    var postID = $(this).val();
+    console.log(postID);
+    socket.emit('postLike', postID);
+    if($(this).attr('class') === 'fa fa-heart liked'){
+      $(this).attr('class', 'fa fa-heart');
+    }else {
+      $(this).attr('class', 'fa fa-heart liked');
+    }
   });
-
-
-
 });
