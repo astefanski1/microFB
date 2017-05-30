@@ -26,7 +26,7 @@
       {{# if isFriend}}
       <div class="addProfilePost">
         <textarea id="postTextArea" name="postTextArea" placeholder="Opublikuj coś ..."></textarea>
-        <button id="addPost" type="submit" class="postBtn blue" name="add-post">Add post</button>
+        <button id="addPost" type="submit" class="postBtn blue" name="add-post" data-user="{{profileUser.username}}">Add post</button>
       </div>
       {{/if}}
       <div class="profilePosts">

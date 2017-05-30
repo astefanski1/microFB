@@ -31,14 +31,16 @@ router.get('/profile/:username', function(req, res, next){
     console.log("Notyfikacja: " + notifications);
     //jeśli wszedłeś na siebie renderuje twojego walla
     if(userReq.id === profileUser.id){
-      Post.find({author: userReq.id}).sort({time: 'desc'}).populate('author').exec(function(err, posts){
+      Post.find({ $or: [ { author: profileUser.id }, { onWall: profileUser.id } ] }).sort({time: 'desc'}).populate('author').exec(function(err, posts){
         if (err) {throw err;}
         console.log("renderuje to");
-        res.render('wall', { title: 'wall', user: req.user, posts: posts, notifications: notifications, countFriends: userReq.friends.length });
+        User.findOne({username: profileUser.username}).populate('friends').exec(function(err, userFriends){
+            res.render('wall', { title: 'wall', user: req.user, posts: posts, notifications: notifications, countFriends: userReq.friends.length, friends: userFriends.friends });
+        });
       });
     } else{
       //Jeśli nie weszliśmy na siebie to
-      Post.find({author: profileUser.id}).sort({time: 'desc'}).populate('author').exec(function(err, posts){
+      Post.find({ $or: [ { author: profileUser.id }, { onWall: profileUser.id } ] }).sort({time: 'desc'}).populate('author').exec(function(err, posts){
         if (err) {throw err;}
         User.findOne({_id: userReq.id}).populate('notifications').populate('friends').exec(function(err, user){
           console.log("Sprawdzamy znajomych");
@@ -80,7 +82,7 @@ router.get('/profile/:username', function(req, res, next){
                                      notifications: user.notifications,
                                      posts: posts,
                                      friends: user.friends,
-                                     countFriends: countFriends });
+                                     countFriends: user.friends.length });
             }
             //jeśli jeszcze nie jesteś jego znajomym
             else {

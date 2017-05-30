@@ -9,7 +9,10 @@ var Post = new Schema({
   likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   time : { type : Date, default: Date.now() },
   numberOfLikes: Number,
-  isLiked: {type: Boolean, default: false}
+  isLiked: {type: Boolean, default: false},
+  onWall: { type: Schema.Types.ObjectId, ref: 'User' },
+  isShared: Boolean,
+  sharedByWho: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
 var Post = module.exports =  mongoose.model('Post', Post);

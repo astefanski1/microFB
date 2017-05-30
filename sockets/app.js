@@ -27,9 +27,29 @@ module.exports = function(io) {
               socket.emit('addPost', {text: text, user: user, time: 'Just now', postID: post._id} );
             });
           });
+        });
 
+        socket.on('addPostOnProfile', function(text, profileUsername){
+          var userReq = socket.request.user;
+          User.findOne({username: profileUsername}, function(err, user){
+            if(err){throw err;}
+            var newPost = new Post({
+              text: text,
+              author: userReq.id,
+              numberOfLikes: 0,
+              onWall: user.id
+            });
 
-
+            newPost.save(function(err){
+              if(err){throw err;}
+              console.log('Succesfully added post! Text: ' + text +  "by user: " + userReq + "username: " + userReq.firstName);
+              Post.findOne({text: text, author: userReq}, function(err, post){
+                if(err){ throw err;}
+                console.log(post);
+                socket.emit('addPostOnProfile', {text: text, user: userReq, time: 'Just now', postID: post._id} );
+              });
+            });
+          });
         });
 
         //adding friend
