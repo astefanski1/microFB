@@ -17,3 +17,5 @@ microFb jest serwisem wzorowanym na Facebooku. Posiada podstawowe funkcje takie 
 * lajkowanie postów swoich i znajomych
 * możliwość udostępniania postów swoich i znajomych
 * możliwość obserwowania znajomych
+* możliwość rozmów prywatnych ze znajomymi
+* możliwość wysłania wiadomości do wszystkich naszych znajomych
