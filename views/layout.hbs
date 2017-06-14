@@ -17,6 +17,7 @@
     <script src="/javascripts/wall.js"></script>
     <script src="/javascripts/friends.js"></script>
     <script src="/javascripts/chat.js"></script>
+    <script src="/javascripts/register.js"></script>
     <!-- socket.io -->
     <script src="/socket.io/socket.io.js"></script>
 
@@ -58,12 +59,12 @@
                   {{# if notifications}}
                     {{# each notifications}}
                       {{# if toFriends}}
-                        <li>
+                        <li data-notification="{{fromUser}}">
                           <p>{{fromUserFullname}}</p> {{text}}
-                          <button id="acceptInvite" value="{{fromUser}}"><i class="fa fa-check" aria-hidden="true"></i></button>
-                          <button id="declineInvite" value="{{fromUser}}"><i class="fa fa-times" aria-hidden="true"></i></button>
+                          <button id="acceptInvite" data-notification="{{fromUser}}"><i class="fa fa-check" aria-hidden="true"></i></button>
+                          <button id="declineInvite" data-notification="{{fromUser}}"><i class="fa fa-times" aria-hidden="true"></i></button>
                         </li>
-                        <li role="separator" class="divider"></li>
+                        <li role="separator" class="divider" data-notification="{{fromUser}}"></li>
                       {{else}}
                         <li><p>{{fromUserFullname}}</p> {{text}} </li>
                         <li role="separator" class="divider"></li>

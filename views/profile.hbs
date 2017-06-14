@@ -13,14 +13,16 @@
           <i><button class="isFriend" id="inviteSended" disabled>Invite sended</button></i>
         {{else}}
           {{# if isFriend}}
-            <!-- <i><buttonclass="isFriend" id="removeFriend">Remove friend</button></i>-->
+            {{# if isFollowing}}
+              <i><button class="fa fa-heart followed" id="followFriend" data-user="{{profileUser.username}}"></button></i>
+            {{else}}
+              <i><button class="fa fa-heart follow" id="followFriend" data-user="{{profileUser.username}}"></button></i>
+            {{/if}}
           {{else}}
             <i><button class="isFriend" id="addFriend">Add friend</button></i>
           {{/if}}
         {{/if}}
       </div>
-
-
     </div>
     <div class="profile-wall">
       {{# if isFriend}}
@@ -33,11 +35,18 @@
         {{# if isFriend}}
           {{# if posts}}
           {{# each posts }}
-
-            <div class="profilePost">
+            {{# if isShared}}
+              <div class="profilePost isShared">
+            {{else}}
+              <div class="profilePost">
+            {{/if}}
               <div class="postAuthor">
                 <img src="https://cdn0.iconfinder.com/data/icons/iconshock_guys/512/andrew.png" >
-                <p>{{author.firstName}} {{author.lastName}}</p>
+                {{# if isShared}}
+                  <p>{{sharedByWho.firstName}} {{sharedByWho.lastName}} > {{author.firstName}} {{author.lastName}}</p>
+                {{else}}
+                  <p>{{author.firstName}} {{author.lastName}}</p>
+                {{/if}}
               </div>
               <div class="profilePostText">
                 {{ text }}
@@ -48,7 +57,13 @@
                 {{else}}
                   <i><button class="fa fa-heart" aria-hidden="true" id="likePost" value="{{id}}"> Like</button></i> |
                 {{/if}}
-                <i class="fa fa-share" aria-hidden="true"> Share it</i>
+                {{# if isShared}}
+                  <i><button class="fa fa-share" aria-hidden="true" id="sharePost" value="{{originalPostId}}"> Share it</button></i>
+                  <i class="profilePostTime"> {{formatDate time }} </i>
+                {{else}}
+                  <i><button class="fa fa-share" aria-hidden="true" id="sharePost" value="{{id}}"> Share it</button></i>
+                  <i class="profilePostTime"> {{formatDate time }} </i>
+                {{/if}}
                 <i class="profilePostTime"> {{formatDate time }} </i>
               </div>
             </div>
@@ -60,7 +75,7 @@
             </div>
           {{/if}}
           {{else}}
-          <div class="profilePost" id="profilePost">
+          <div class="profilePost" id="noFriend">
             <h2><center> To see posts {{profileUser.firstName}} {{profileUser.lastName}} add him to friends! </center></h2>
           </div>
         {{/if}}
@@ -82,5 +97,9 @@
 
 
 <div class="chatBoxes" id="chatBoxes">
+
+</div>
+
+<div id="notificationsBox" class="notificationsBox">
 
 </div>

@@ -1,3 +1,77 @@
+@sharedColor:#00D1B2 !important;
+
+//notifications
+.notificationsBox {
+  position: fixed;
+  bottom: 0;
+  width: 25%;
+  left: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  margin: 0px 0px 20px 20px;
+
+  .notificationShow{
+    border: 0px solid #00D1B2;
+    border-radius: 5px;
+    background-color: #00D1B2;
+    width: 100%;
+    height: 100px;
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    display: block;
+
+    .info-image{
+      float: left;
+      font-size: 2em;
+      background-color: #01ad93;
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+      width: 30%;
+      height: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .notification-text{
+      float: inherit;
+      height: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    p  {
+      margin: 0px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+}
+
+
+//post shared
+.isShared {
+  border: 5px solid @sharedColor;
+}
+
+//follow
+.follow {
+  border: 0px;
+  background: none;
+  font-size: 3em;
+}
+
+.followed {
+  border: 0px;
+  background: none;
+  font-size: 3em;
+  color: red;
+}
+
+
 .messageReciver {
   background: #acc6e2;
   b{

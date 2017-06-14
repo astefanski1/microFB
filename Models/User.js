@@ -10,6 +10,7 @@ var User = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  friendsFollowing: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   friendsInvites: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   notifications: [{ type: Schema.Types.ObjectId, ref: 'Notification' }]
 });

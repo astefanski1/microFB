@@ -5,7 +5,7 @@
       {{# if countFriends}}
         <i>Friends: {{countFriends}}</i>
       {{else}}
-        <i>Friends: Hidded</i>
+        <i>Friends: 0</i>
       {{/if}}
     </div>
     <div class="profile-wall">
@@ -16,10 +16,19 @@
       <div class="profilePosts">
         {{# if posts}}
         {{# each posts }}
-          <div class="profilePost">
+          {{# if isShared}}
+            <div class="profilePost isShared">
+          {{else}}
+            <div class="profilePost">
+          {{/if}}
             <div class="postAuthor">
               <img src="https://cdn0.iconfinder.com/data/icons/iconshock_guys/512/andrew.png" >
-              <p>{{author.firstName}} {{author.lastName}}</p>
+              {{# if isShared}}
+                <p>{{sharedByWho.firstName}} {{sharedByWho.lastName}} > {{author.firstName}} {{author.lastName}}</p>
+              {{else}}
+                <p>{{author.firstName}} {{author.lastName}}</p>
+              {{/if}}
+
             </div>
             <div class="profilePostText">
               {{ text }}
@@ -30,8 +39,17 @@
               {{else}}
                 <i><button class="fa fa-heart" aria-hidden="true" id="likePost" value="{{id}}"> Like</button></i> |
               {{/if}}
-              <i><button class="fa fa-share" aria-hidden="true" id="sharePost" value="{{id}}"> Share it</button></i>
-              <i class="profilePostTime"> {{formatDate time }} </i>
+              {{# if isShared}}
+                <i><button class="fa fa-share" aria-hidden="true" id="sharePost" value="{{originalPostId}}"> Share it</button></i>
+                <i class="profilePostTime"> {{formatDate time }} </i>
+              {{else}}
+                <i><button class="fa fa-share" aria-hidden="true" id="sharePost" value="{{id}}"> Share it</button></i>
+                <i class="profilePostTime"> {{formatDate time }} </i>
+              {{/if}}
+
+
+
+
             </div>
           </div>
 
@@ -60,5 +78,10 @@
 
 
 <div class="chatBoxes" id="chatBoxes">
+
+</div>
+
+
+<div id="notificationsBox" class="notificationsBox">
 
 </div>

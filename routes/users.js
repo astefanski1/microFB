@@ -5,6 +5,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('../Models/User');
 var Post = require('../Models/Post');
+var SharedPost = require('../Models/SharedPost');
 var Notification = require('../Models/Notification');
 
 /* GET users listing. */
@@ -28,21 +29,80 @@ router.get('/profile/:username', function(req, res, next){
     var inviteSended = false;
     var isMyFriend = false;
     var countFriends = 0;
+    var profileUserFriendsCount = profileUser.friends.length;
+    var isLiked = false;
+    var isFollowing = false;
+    console.log(profileUser.friends.length);
     console.log("Notyfikacja: " + notifications);
     //jeśli wszedłeś na siebie renderuje twojego walla
     if(userReq.id === profileUser.id){
-      Post.find({ $or: [ { author: profileUser.id }, { onWall: profileUser.id } ] }).sort({time: 'desc'}).populate('author').exec(function(err, posts){
+      Post.find({ $or: [ { author: profileUser.id }, { onWall: profileUser.id } ] }).sort({time: 'desc'}).populate('author').populate('sharedPostId').exec(function(err, posts){
+        var postsToSend = posts;
         if (err) {throw err;}
         console.log("renderuje to");
         User.findOne({username: profileUser.username}).populate('friends').exec(function(err, userFriends){
-            res.render('wall', { title: 'wall', user: req.user, posts: posts, notifications: notifications, countFriends: userReq.friends.length, friends: userFriends.friends });
+          //Searching shared posts
+          posts.forEach((post, index) => {
+            post.sharedPostId.forEach((sharedPost, index) => {
+              //checking likes on shared post
+              isLiked = false;
+              if(sharedPost.likes.length === 0){
+                //console.log(index.author);
+                //console.log("Nie ma lajków!");
+                sharedPost.isLiked = false;
+              }else {
+                //Petla lajków w poście
+                //console.log(sharedPost.likes);
+                for (var like of sharedPost.likes) {
+                  //jeśli user to polajkował to true jesli nie to false
+                    if(like.equals(req.user._id)){
+                      isLiked = true;
+                    }
+                }
+                if(isLiked === true){
+                  sharedPost.isLiked = true;
+                }else {
+
+                  sharedPost.isLiked = false;
+                }
+              }
+              sharedPost.save(function(err){
+                //each shared post
+                userReq.friends.forEach((friend, index) => {
+                  //checking shared posts by friends
+                  if(friend.equals(sharedPost.sharedByWho)){
+                    SharedPost.findOne({_id: sharedPost._id}).populate('author').populate('sharedByWho').exec(function(err, sharedPostToPush){
+                      //console.log(sharedPostToPush);
+                      postsToSend.push(sharedPostToPush);
+                      postsToSend.sort(function(a,b){
+                        return new Date(b.time) - new Date(a.time);
+                      });
+                    });
+                  }
+                });
+                //checking shared posts by me
+                if(sharedPost.sharedByWho.equals(userReq._id)){
+                  SharedPost.findOne({_id: sharedPost._id}).populate('author').populate('sharedByWho').exec(function(err, sharedPostToPush){
+                    //console.log(sharedPostToPush);
+                    postsToSend.push(sharedPostToPush);
+                    postsToSend.sort(function(a,b){
+                      return new Date(b.time) - new Date(a.time);
+                    });
+                  });
+                }
+              });
+            });
+          });
+
+          res.render('wall', { title: 'wall', user: req.user, posts: postsToSend, notifications: notifications, countFriends: profileUser.friends.length, friends: userFriends.friends });
         });
       });
     } else{
       //Jeśli nie weszliśmy na siebie to
-      Post.find({ $or: [ { author: profileUser.id }, { onWall: profileUser.id } ] }).sort({time: 'desc'}).populate('author').exec(function(err, posts){
+      Post.find({ $or: [ { author: profileUser.id }, { onWall: profileUser.id } ] }).sort({time: 'desc'}).populate('author').populate('sharedPostId').exec(function(err, posts){
         if (err) {throw err;}
-        User.findOne({_id: userReq.id}).populate('notifications').populate('friends').exec(function(err, user){
+        var postsToSend = posts;
+        User.findOne({_id: userReq.id}).populate('notifications').populate('friends').populate('friendsFollowing').exec(function(err, user){
           console.log("Sprawdzamy znajomych");
           //Sprawdzamy czy lista znajomych jest pusta
           if(friends.length !== 0){
@@ -51,11 +111,10 @@ router.get('/profile/:username', function(req, res, next){
             for (var friend of friends) {
               //jeśli jesteś jego znajomym
               countFriends += 1;
-              if(friend == userReq.id){
+              if(friend.equals(userReq._id)){
                 isMyFriend = true;
               }
             }
-            var isLiked = false;
             if(isMyFriend === true){
               for (var post of posts) {
                 isLiked = false;
@@ -64,7 +123,7 @@ router.get('/profile/:username', function(req, res, next){
                 }
                 else {
                   for (var like of post.likes) {
-                    if(like == userReq.id){
+                    if(like.equals(userReq._id)){
                       isLiked = true;
                     }
                   }
@@ -76,19 +135,81 @@ router.get('/profile/:username', function(req, res, next){
                   post.save();
                 }
               }
+              //Searching shared posts
+              posts.forEach((post, index) => {
+                post.sharedPostId.forEach((sharedPost, index) => {
+                  //checking likes on shared post
+                  isLiked = false;
+                  if(sharedPost.likes.length === 0){
+                    //console.log(index.author);
+                    //console.log("Nie ma lajków!");
+                    sharedPost.isLiked = false;
+                  }else {
+                    //Petla lajków w poście
+                    //console.log(sharedPost.likes);
+                    for (var like of sharedPost.likes) {
+                      //jeśli user to polajkował to true jesli nie to false
+                        if(like.equals(req.user._id)){
+                          isLiked = true;
+                        }
+                    }
+                    if(isLiked === true){
+                      sharedPost.isLiked = true;
+                    }else {
+
+                      sharedPost.isLiked = false;
+                    }
+                  }
+                  sharedPost.save(function(err){
+                    //each shared post
+                    userReq.friends.forEach((friend, index) => {
+                      //checking shared posts by friends
+                      if(friend.equals(sharedPost.sharedByWho)){
+                        console.log("BLABL");
+                        SharedPost.findOne({_id: sharedPost._id}).populate('author').populate('sharedByWho').exec(function(err, sharedPostToPush){
+                          console.log(sharedPostToPush);
+                          postsToSend.push(sharedPostToPush);
+                          postsToSend.sort(function(a,b){
+                            return new Date(b.time) - new Date(a.time);
+                          });
+                        });
+                      }
+                    });
+                    //checking shared posts by me
+                    if(sharedPost.sharedByWho.equals(userReq._id)){
+                      SharedPost.findOne({_id: sharedPost._id}).populate('author').populate('sharedByWho').exec(function(err, sharedPostToPush){
+                        console.log(sharedPostToPush);
+                        postsToSend.push(sharedPostToPush);
+                        postsToSend.sort(function(a,b){
+                          return new Date(b.time) - new Date(a.time);
+                        });
+                      });
+                    }
+                  });
+                });
+              });
+
+              user.friendsFollowing.forEach((follow, index) => {
+                if(follow.equals(profileUser._id)){
+                  isFollowing = true;
+                }
+              });
+
               res.render('profile', {user: userReq,
                                      profileUser: profileUser,
                                      isFriend: true,
                                      notifications: user.notifications,
-                                     posts: posts,
+                                     posts: postsToSend,
                                      friends: user.friends,
-                                     countFriends: user.friends.length });
+                                     countFriends: profileUser.friends.length,
+                                     isFollowing: isFollowing
+                                     });
             }
             //jeśli jeszcze nie jesteś jego znajomym
             else {
               console.log("Nie jest moim znajomym");
               for (var inviteCheck of friendsInvites) {
-                if(inviteCheck == userReq.id){
+                if(inviteCheck.equals(userReq._id)){
                   inviteSended = true;
                 }
               }
@@ -112,7 +233,7 @@ router.get('/profile/:username', function(req, res, next){
             //Jeśli lista jest pusta
             //Sprawdzamy czy wyslałeś już zaproszenie do znajomych
             for (var invite of friendsInvites) {
-              if(invite == userReq.id){
+              if(invite.equals(userReq._id)){
                 inviteSended = true;
               }
             }

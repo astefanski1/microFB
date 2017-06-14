@@ -16,36 +16,6 @@ $(document).ready(function(){
      }
   });
 
-  //Odbieranie wiadomości od kogoś z allFriends
-  socket.on('allFriendsChatMessageSended', function(data){
-    var whoSended = data.whoSended;
-    var message = data.message;
-    var chatBoxes = $('#chatBoxes');
-    var isAppended = $('#messageFromAllFriends');
-    var chatTable = $('.chatBoxArchive');
-    if(isAppended.length){
-      $('#allFriendsChatMessageSended').append(`<li><b>${whoSended}:</b> ${message}</li>`);
-      chatTable[0].scrollTop = chatTable[0].scrollHeight;
-    }else {
-      chatBoxes.append(`<div class="chatBox" id="messageFromAllFriends">
-                          <div class="chatBoxTitle" id="chatBoxTitle">
-                            ${whoSended}
-                            <button class="fa fa-times" aria-hidden="true" id="messageFromAllFriendsRoom"></button>
-                          </div>
-                          <div class="chatBoxArchive">
-                            <ul id="allFriendsChatMessageSended">
-                              <li><b>${whoSended}:</b> ${message}</li>
-                            </ul>
-                          </div>
-                          <div class="chatBoxSendText">
-                            <input type="text" id="allFriendsInput" class="" placeholder="..." disabled>
-                          </div>
-                        </div>`);
-    }
-
-
-  });
-
   //Usunięcie czatu
   $('div').on('click','#messageFromAllFriendsRoom', function(){
     $('#messageFromAllFriends').remove();
