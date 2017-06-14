@@ -5,7 +5,7 @@ Aplikacja webowa wzorowana na najpopularniejszym serwisie Facebook.
 ## Autorzy
 Aleksander Stefański
 
-##Opis
+## Opis
 
 microFb jest serwisem wzorowanym na Facebooku. Posiada podstawowe funkcje takie jak:
 
